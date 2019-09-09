@@ -4,6 +4,7 @@
   "description": "EndToEnd testing for the Strichliste project",
   "scripts": {
     "start": "cypress open",
+    "local": "CYPRESS_baseUrl=http://localhost:3000 cypress open",
     "test": "cypress run",
     "update": "upgrade-interactive --latest"
   },

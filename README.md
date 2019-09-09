@@ -9,6 +9,7 @@ yarn
 ## Use
 
 - During development `yarn start`
+- Run against local web app on `http://localhost:3000` development `yarn local`
 - On build server `yarn test`
 
 ## Housekeeping
