@@ -1,4 +1,7 @@
 export const en = {
+  BALANCE_DISPENSE: 'dispense',
+  BALANCE_PLACEHOLDER: 'CUSTOM AMOUNT',
+  BALANCE_DEPOSIT: 'deposit',
   ARTICLE_HEADLINE: 'Articles',
   ARTICLE_LINK: 'Article List',
   ARTICLE_ADD_LINK: 'add new articles',
@@ -47,6 +50,8 @@ export const en = {
   USER_TRANSACTION_CREATE_CUSTOM_DEPOSIT_BUTTON: 'Charge wallet',
   USER_TRANSACTION_CREATE_CUSTOM_DISPENSE_BUTTON: 'Pay purchase',
   USER_TRANSACTION_FROM_AMOUNT_LABEL: 'Amount',
+  USER_TRANSACTION_CREATE_SUBMIT_TITLE:
+    'Submit to send this amount to a friend',
   USER_TRANSACTION_UNDO: 'undo',
   USER_SELECTION_LIST_LABEL: 'Select a user by name',
   USER_CREATE_HEADLINE: 'Create new user',
