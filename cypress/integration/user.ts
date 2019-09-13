@@ -2,9 +2,13 @@ import { en } from '../en';
 
 const testUser = 'testUser';
 const sendToUser = 'sendToUser';
+const splitMoneyUser = 'splitMoneyUser';
+const editedUser = 'sendToUserEdited';
 
 const sessionUserName = testUser + Date.now();
 const sendToUserName = sendToUser + Date.now();
+const editedUserName = editedUser + Date.now();
+const splitMoneyUserName = splitMoneyUser + Date.now();
 
 const createUser = (name: string) => {
   cy.getByTitle(en.USER_CREATE_NAME_LABEL).click();
@@ -43,6 +47,10 @@ describe('user', () => {
     cy.getByTitle(en.BALANCE_TITLE).contains('€0.00');
   });
 
+  it('search works', () => {
+    goToUserBySearch(sessionUserName);
+  });
+
   it('send money works', () => {
     cy.visit('/');
     createUser(sendToUserName);
@@ -62,4 +70,59 @@ describe('user', () => {
     cy.getByTitle(en.USER_TRANSACTION_CREATE_SUBMIT_TITLE).click();
     cy.getByText(/You sent User/).should('be.visible');
   });
+
+  it('edit user works', () => {
+    const editMail = 'test@test.de';
+    goToUserBySearch(sessionUserName);
+    cy.getByText(en.USER_EDIT_LINK).click();
+    cy.getByPlaceholderText(en.USER_EDIT_NAME_LABEL)
+      .clear()
+      .type(editedUserName);
+    cy.getByPlaceholderText(en.USER_EDIT_MAIL_LABEL).type(editMail);
+    cy.getByTitle(en.USER_EDIT_TRIGGER).click();
+    cy.visit('/');
+    cy.wait(100);
+    goToUserBySearch(editedUserName);
+    cy.getByText(en.USER_EDIT_LINK).click();
+    cy.getByDisplayValue(editMail).should('be.visible');
+  });
+
+  it('split money works', () => {
+    cy.visit('/');
+    createUser(splitMoneyUserName);
+    cy.getByText(en.SPLIT_INVOICE_LINK).click();
+    cy.getByPlaceholderText('amount').type('900');
+    cy.getByPlaceholderText('select recipient').type(splitMoneyUserName);
+    cy.getByText(splitMoneyUserName).click();
+    cy.getByPlaceholderText('comment').type('test');
+    cy.getByPlaceholderText('add participant').type(editedUserName);
+    cy.getByText(editedUserName).click();
+    cy.getByPlaceholderText('add participant').type(sendToUserName);
+    cy.getByText(sendToUserName).click();
+    cy.getByText('2 participants split +€9.00').should('be.visible');
+    cy.getByText(
+      'everybody has to pay +€4.50 to splitMoneyUser1568789926996'
+    ).should('be.visible');
+    cy.getByTitle(en.SPLIT_INVOICE_SUBMIT).click();
+  });
+
+  it('disables test users', () => {
+    cleanUpUser(editedUserName);
+    cleanUpUser(sendToUserName);
+    cleanUpUser(splitMoneyUserName);
+  });
 });
+
+function cleanUpUser(name: string) {
+  goToUserBySearch(name);
+  cy.getByText(en.USER_EDIT_LINK).click();
+  cy.getByLabelText(en.USER_EDIT_ACTIVE_LABEL).click();
+  cy.getByText(en.USER_EDIT_ACTIVE_WARNING).should('be.visible');
+  cy.getByTitle(en.USER_EDIT_TRIGGER).click();
+}
+
+function goToUserBySearch(name: string) {
+  cy.getByText(en.SEARCH).click();
+  cy.getByPlaceholderText('search').type(name);
+  cy.getByText(name).click();
+}
