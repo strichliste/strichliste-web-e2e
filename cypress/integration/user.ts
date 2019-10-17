@@ -21,6 +21,8 @@ describe('user', () => {
 
     // create user and navigate to detail page on success
     createUser(sessionUserName);
+    cy.wait(100);
+
     cy.findByText(content => content.startsWith(testUser));
     cy.findByText(en.TRANSACTION_EMPTY_STATE);
     cy.findByTitle(en.BALANCE_TITLE).contains('€0.00');
@@ -60,9 +62,9 @@ describe('user', () => {
     );
     cy.findByPlaceholderText(en.USER_TRANSACTION_FROM_AMOUNT_LABEL).type('500');
 
-    cy.findByPlaceholderText(en.CREATE_USER_TO_USER_TRANSACTION_USER)
-      .click()
-      .type(`${sessionUserName}{downarrow}{enter}`);
+    cy.findByText(en.CREATE_USER_TO_USER_TRANSACTION_USER).click();
+    cy.wait(10);
+    selectUserByModal(sessionUserName);
 
     cy.findByPlaceholderText(en.CREATE_USER_TO_USER_TRANSACTION_COMMENT).type(
       'a test comment'
@@ -92,13 +94,15 @@ describe('user', () => {
     createUser(splitMoneyUserName);
     cy.findByText(en.SPLIT_INVOICE_LINK).click();
     cy.findByPlaceholderText('amount').type('900');
-    cy.findByPlaceholderText('select recipient').type(splitMoneyUserName);
-    cy.findByText(splitMoneyUserName).click();
+    cy.findByText('select recipient').click();
+    selectUserByModal(splitMoneyUserName);
     cy.findByPlaceholderText('comment').type('test');
-    cy.findByPlaceholderText('add participant').type(editedUserName);
+    cy.findByText('add participant').click();
+    selectUserByModal(editedUserName);
     cy.findByText(editedUserName).click();
-    cy.findByPlaceholderText('add participant').type(sendToUserName);
-    cy.findByText(sendToUserName).click();
+    cy.findByText('add participant').click;
+    selectUserByModal(sendToUserName);
+
     cy.findByText('3 participants split +€9.00').should('be.visible');
     cy.findByText(content =>
       content.startsWith('everybody has to pay +€3.00 to')
@@ -113,6 +117,11 @@ describe('user', () => {
   });
 });
 
+function selectUserByModal(name: string) {
+  cy.findByPlaceholderText(en.SEARCH).type(name);
+  cy.findByText(name).click();
+}
+
 function cleanUpUser(name: string) {
   goToUserBySearch(name);
   cy.findByText(en.USER_EDIT_LINK).click();
@@ -124,6 +133,6 @@ function cleanUpUser(name: string) {
 function goToUserBySearch(name: string) {
   cy.visit('/');
   cy.findByText(en.SEARCH).click();
-  cy.findByPlaceholderText('search').type(name);
+  cy.findByPlaceholderText(en.SEARCH).type(name);
   cy.findByText(name).click();
 }
