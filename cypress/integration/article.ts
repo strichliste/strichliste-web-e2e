@@ -63,8 +63,8 @@ describe('article', () => {
   it('finds article by tag and deletes tag barcode and article', () => {
     cy.visit('#!/articles/active');
     cy.findByText(testArticleTag).click();
-    cy.wait(10);
-    cy.findByText(`${testArticle} €5.00`).click();
+    cy.wait(100);
+    cy.findByText(`${testArticle}`).click();
 
     // edit article works
     cy.findByLabelText(en.ARTICLE_ADD_FORM_NAME_LABEL).type(editArticle);
